@@ -1,1 +1,72 @@
+from graph import *
+import random
+penSize(0) #background
+brushColor(0,255,44)
+rectangle(0, 300, 500, 700)
+brushColor("cyan")
+rectangle(0,0,700,300)
 
+brushColor("yellow") #sun
+circle(480,70,100)
+
+brushColor(191,222,219) #tree
+rectangle(70,410,100,200)
+brushColor(0,150,0)
+ellyps(20,230,160,330)
+ellyps(30,80,150,220)
+ellyps(-20,150,190,250)
+brushColor(245,184,116)
+circle(120,130,15)
+circle(130,310,15)
+circle(160,210,15)
+circle(0,200,15)
+
+for i in range (35):       #horse
+    color = random.randint(1, 5)
+    if color==1:
+        brushColor(255, 189, 245)
+    if color==2:
+        brushColor(251, 102, 255)
+    if color==3:
+        brushColor(236, 255, 102)
+    if color==4:
+        brushColor(106, 219, 242)
+    if color==5:
+        brushColor(255, 204, 153)
+    x = random.randint(140, 200)
+    y = random.randint(430, 530)
+    ellyps(x, y , x + 60, y + 10)
+brushColor('white')
+ellyps(200,400,400,490)
+rectangle(220,470,235,550)
+rectangle(258,470,278,535)
+rectangle(325,470,343,557)
+rectangle(365,470,378,540)
+rectangle(335,470,390,350)
+ellyps(365,355,425,385)
+ellyps(330,340,390,370)
+for i in range (25):
+    color = random.randint(1, 5)
+    if color==1:
+        brushColor(255, 189, 245)
+    if color==2:
+        brushColor(251, 102, 255)
+    if color==3:
+        brushColor(236, 255, 102)
+    if color==4:
+        brushColor(106, 219, 242)
+    if color==5:
+        brushColor(255, 204, 153)
+    x = random.randint(270, 300)
+    y = random.randint(350, 410)
+    ellyps(x, y , x + random.randint(30,60), y + 10)
+brushColor(236,139,220)
+ellyps(320,340,365,355)
+penColor(236,139,220)
+polygon([(355,345),(365,275),(370,350),(355,345)])
+circle(377,365,8)
+brushColor('black')
+circle(380,365,3)
+brushColor('white')
+circle(373,362,3)
+run()
