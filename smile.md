@@ -1,5 +1,4 @@
 # infa_2019_spirin
-smile
 from graph import *
 brushColor('yellow')
 circle(250,300,150)
