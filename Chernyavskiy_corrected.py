@@ -28,8 +28,6 @@ for i in range (6):
     for m in range(10):
         if (40 + 5*i + m * 21) < 210:
             line(40+ 5*i + m*21, 340-i*15, 40 + 5*i + m*21, 340-(i+1)*15)
-
-
 penColor('white')
 brushColor('white')
 rectangle(15,340,230,450)
