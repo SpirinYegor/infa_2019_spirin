@@ -1,3 +1,11 @@
-48
-24
-20
+52 Peter
+52 Freeman
+45 Gandi
+27 Rey
+24 Igor
+15 LeroyJenkins
+13 teww
+12 James
+5 Tolkien
+3 Edvard
+2 Yoda

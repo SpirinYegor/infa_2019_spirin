@@ -1,9 +1,18 @@
 from tkinter import *
-import math as m
 from random import randrange as rnd, choice
-import pickle
 import time
-from operator import itemgetter
+def clicked():
+    global name
+    name=txt.get()
+    root.destroy()
+root = Tk()
+txt = Entry(width=20)
+b = Button(text="ОК", command=clicked)
+l=Label(text="Enter your name")
+txt.pack()
+b.pack()
+l.pack()
+root.mainloop()
 root = Tk()
 root.geometry('800x600')
 
@@ -14,9 +23,13 @@ colors = ['red','orange','yellow','green','blue']
 obj=[]
 high_scores=[]
 score=0
+k=0
 with open('highscores.txt') as f:
     for line in f:
-        high_scores.append([int(x) for x in line.split()])
+        high_scores.append(line.split())
+        k+=1
+for i in range(k):
+    high_scores[i][0]=int(high_scores[i][0])
 
 def randomball():
     x = rnd(100, 500)
@@ -111,11 +124,13 @@ def click(event):
 display()
 canv.bind('<Button-1>', click)
 mainloop()
-high_scores.append([score])
-high_scores = sorted(high_scores, reverse=True)
+high_scores.append([score, name])
+high_scores = sorted(high_scores, reverse=True, key=lambda  i: i[0])
 with open('highscores.txt', 'w') as f:
     for i in high_scores:
         f.writelines(str(i[0]))
+        f.writelines(' ')
+        f.writelines(str(i[1]))
         f.writelines('\n')
 
 
