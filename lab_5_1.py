@@ -171,13 +171,12 @@ class Target():
 def new_game(event=''):
     global gun, target, screen1, balls, bullet, score
     bullet = 0
-    check=2
+    check = 2
+    n = 2
     balls = []
     targets= []
-    target1=Target()
-    target2=Target()
-    targets += [target1]
-    targets += [target2]
+    for i in range(n):
+        targets += [Target()]
     canvas.bind('<Button-1>', gun.fire2_start)
     canvas.bind('<ButtonRelease-1>', gun.fire2_end)
     canvas.bind('<Motion>', gun.targetting)
@@ -196,6 +195,7 @@ def new_game(event=''):
                     sc=canvas.create_text(30, 30, text=score, font='28')
                     check -= 1
                     canvas.delete(t.id)
+                    canvas.delete(b.id)
                     canvas.bind('<Button-1>', gun.fire2_start)
                     canvas.bind('<ButtonRelease-1>', gun.fire2_end)
                     canvas.bind('<Motion>', gun.targetting)
@@ -209,7 +209,7 @@ def new_game(event=''):
                         canvas.delete(text)
                         canvas.delete(sc)
                         canvas.delete(b.id)
-                        check=2
+                        check=n
                         new_game()
         canvas.update()
         time.sleep(0.03)
