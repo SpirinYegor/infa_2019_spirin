@@ -80,7 +80,7 @@ class Ball():
         Returns:
             Возвращает True в случае столкновения мяча и цели. В противном случае возвращает False.
         """
-        if self.x>=obj.x-obj.r and self.x<=obj.x+obj.r and self.y>=obj.y-obj.r and self.y<=obj.y+obj.r:
+        if math.sqrt((self.x-obj.x)*(self.x-obj.x)+(self.y-obj.y)*(self.y-obj.y))<=self.r+obj.r:
             return True
         else:
             return False
