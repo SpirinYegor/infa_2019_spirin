@@ -3,17 +3,20 @@ import tkinter as tk
 import math
 import time
 
+
 def main():
-    global root, canvas, gun, target, score
+    global root, canvas, gun, target, score, gy
     root = tk.Tk()
-    score=0
+    score = 0
     root.geometry('800x600')
     canvas = tk.Canvas(root, bg='white')
     canvas.pack(fill=tk.BOTH, expand=1)
     screen1 = canvas.create_text(400, 300, text='', font='28')
     gun = Gun()
+    gy = 1
     bullet = 0
     balls = []
+
 
 class Ball():
     def __init__(self, x=40, y=450, vx=0, vy=0):
@@ -25,8 +28,8 @@ class Ball():
         self.x = x
         self.y = y
         self.r = 10
-        self.vx = vx/2
-        self.vy = vy/2
+        self.vx = vx
+        self.vy = vy
         self.color = choice(['blue', 'green', 'red', 'brown'])
         self.id = canvas.create_oval(
                 self.x - self.r,
@@ -53,25 +56,25 @@ class Ball():
         self.x и self.y с учетом скоростей self.vx и self.vy, силы гравитации, действующей на мяч,
         и стен по краям окна (размер окна 800х600).
         """
-        self.live-=0.5
-        if self.live>=0:
-            if self.x>=800:
-                self.vx=-self.vx
-                self.x=800-self.r
-            if self.y>=600:
-                self.vy=-self.vy
-                self.y=600-self.r
-            if self.x<=0:
-                self.vx=-self.vx
-                self.x=self.r
+        if self.live >= 0:
+            if self.x >= 800:
+                self.vx = -self.vx
+                self.x = 800-self.r
+            if self.y >= 600:
+                self.vy = -self.vy
+                self.y = 600-self.r
+                self.live -= 5
+            if self.x <= 0:
+                self.vx = -self.vx
+                self.x = self.r
             else:
-                self.vy -= 0.1*(80-self.live)
-                self.vx*=0.99
+                self.vy -= gy
+                self.vy *= 0.98
+                self.vx *= 0.99
                 self.x += self.vx
                 self.y -= self.vy
             self.set_coords()
-        if self.live<-10:
-            canvas.delete(self.id)
+
     def hittest(self, obj):
         """Функция проверяет сталкивалкивается ли данный обьект с целью, описываемой в обьекте obj.
 
@@ -80,7 +83,7 @@ class Ball():
         Returns:
             Возвращает True в случае столкновения мяча и цели. В противном случае возвращает False.
         """
-        if math.sqrt((self.x-obj.x)*(self.x-obj.x)+(self.y-obj.y)*(self.y-obj.y))<=self.r+obj.r:
+        if math.sqrt((self.x-obj.x)*(self.x-obj.x)+(self.y-obj.y)*(self.y-obj.y)) <= self.r+obj.r:
             return True
         else:
             return False
@@ -88,12 +91,17 @@ class Ball():
 
 class Gun():
     def __init__(self):
+        self.upon = 0
+        self.updown = 0
         self.f2_power = 10
         self.f2_on = 0
+        self.vy = 5
         self.angle = 1
-        self.x=20
-        self.y=450
-        self.id = canvas.create_line(self.x , self.y, 50, 420,width=7)
+        self.x = 20
+        self.y = 450
+        self.x1 = 50
+        self.y1 = 420
+        self.id = canvas.create_line(self.x, self.y, self.x1, self.y1, width=7)
 
     def fire2_start(self, event):
         self.f2_on = 1
@@ -108,11 +116,11 @@ class Gun():
         bullet += 1
         r = 5
         self.angle = math.atan((event.y - self.y) / (event.x - self.x))
-        x=20 + max(self.f2_power, 20) * math.cos(self.angle)
-        y=450 + max(self.f2_power, 20) * math.sin(self.angle)
+        x = 20 + max(self.f2_power, 20) * math.cos(self.angle)
+        y = self.y + max(self.f2_power, 20) * math.sin(self.angle)
         vx = self.f2_power * math.cos(self.angle)
         vy = - self.f2_power * math.sin(self.angle)
-        new_ball= Ball(x, y, vx, vy)
+        new_ball = Ball(x, y, vx, vy)
         balls += [new_ball]
         self.f2_on = 0
         self.f2_power = 10
@@ -120,15 +128,14 @@ class Gun():
     def targetting(self, event=0):
         """Прицеливание. Зависит от положения мыши."""
         if event:
-            self.angle = math.atan((event.y - 450) / (event.x - 20))
+            self.angle = math.atan((event.y - self.y) / (event.x - 20))
         if self.f2_on:
             canvas.itemconfig(self.id, fill='orange')
         else:
             canvas.itemconfig(self.id, fill='black')
-        canvas.coords(self.id, 20, 450,
-                      20 + max(self.f2_power, 20) * math.cos(self.angle),
-                      450 + max(self.f2_power, 20) * math.sin(self.angle)
-                      )
+        self.x1 = 20 + max(self.f2_power, 20) * math.cos(self.angle)
+        self.y1 = self.y + max(self.f2_power, 20) * math.sin(self.angle)
+        canvas.coords(self.id, 20, self.y, self.x1, self.y1)
 
     def power_up(self):
         if self.f2_on:
@@ -138,6 +145,36 @@ class Gun():
         else:
             canvas.itemconfig(self.id, fill='black')
 
+    def up_start(self, event):
+        self.upon = 1
+
+    def moveup(self):
+        if self.upon == 1:
+            if self.y >= 10:
+                canvas.update()
+                self.y -= self.vy
+
+    def up_finish(self, event):
+        self.upon = 0
+
+    def down_start(self, event):
+        self.updown = 1
+
+    def movedown(self):
+        if self.updown == 1:
+            if self.y <= 590:
+                canvas.update()
+                self.y += self.vy
+
+    def down_finish(self, event):
+        self.updown = 0
+
+    def hittest(self, obj):
+        if math.sqrt((self.x1-obj.x)*(self.x1-obj.x)+(self.y1-obj.y)*(self.y1-obj.y)) <= obj.r:
+            return True
+        else:
+            return False
+
 
 class Target():
     def __init__(self):
@@ -146,12 +183,13 @@ class Target():
         x = self.x = rnd(600, 780)
         y = self.y = rnd(300, 550)
         r = self.r = rnd(15, 50)
-        self.vx=rnd(1,10)
-        self.vy=rnd(1,10)
+        self.vx = rnd(1, 10)
+        self.vy = rnd(1, 10)
         color = self.color = 'red'
         self.id = canvas.create_oval(0, 0, 0, 0)
         canvas.coords(self.id, x-r, y-r, x+r, y+r)
         canvas.itemconfig(self.id, fill=color)
+
     def set_coords(self):
         canvas.coords(
                 self.id,
@@ -159,66 +197,89 @@ class Target():
                 self.y - self.r,
                 self.x + self.r,
                 self.y + self.r)
+
     def move(self):
-        if self.x>=800 or self.x<=0:
-            self.vx=-self.vx
-        if self.y>=600 or self.y<=0:
-            self.vy=-self.vy
-        self.x+=self.vx
-        self.y+=self.vy
+        if self.x >= 800 or self.x <= 0:
+            self.vx = -self.vx
+        if self.y >= 600 or self.y <= 0:
+            self.vy = -self.vy
+        self.x += self.vx
+        self.y += self.vy
         self.set_coords()
 
-def new_game(event=''):
+
+def new_game():
     global gun, target, screen1, balls, bullet, score
     bullet = 0
     check = 2
     n = 2
     balls = []
-    targets= []
+    targets = []
     for i in range(n):
         targets += [Target()]
     canvas.bind('<Button-1>', gun.fire2_start)
     canvas.bind('<ButtonRelease-1>', gun.fire2_end)
     canvas.bind('<Motion>', gun.targetting)
-    sc=canvas.create_text(30, 30, text=score, font='28')
+    root.bind('<KeyPress-Up>', gun.up_start)
+    root.bind('<KeyRelease-Up>', gun.up_finish)
+    root.bind('<KeyPress-Down>', gun.down_start)
+    root.bind('<KeyRelease-Down>', gun.down_finish)
+    sc = canvas.create_text(30, 30, text=score, font='28')
     while True:
         for t in targets:
             t.move()
+            if gun.hittest(t) and t.live:
+                canvas.delete(gun)
+                for t in targets:
+                    canvas.delete(t.id)
+                    t.live = 0
+                for b in balls:
+                    canvas.delete(b.id)
+                    b.live = -50
+                canvas.delete(sc)
+                score = 0
+                gun.x = 20
+                gun.y = 450
+                new_game()
         for b in balls:
             b.move()
             for t in targets:
-                canvas.update()
-                if b.hittest(t) and t.live:
+                if b.hittest(t) and t.live and b.live > 0:
                     t.live = 0
                     score += 1
                     canvas.delete(sc)
-                    sc=canvas.create_text(30, 30, text=score, font='28')
+                    b.live = -50
+                    sc = canvas.create_text(30, 30, text=score, font='28')
                     check -= 1
                     canvas.delete(t.id)
                     canvas.delete(b.id)
                     canvas.bind('<Button-1>', gun.fire2_start)
                     canvas.bind('<ButtonRelease-1>', gun.fire2_end)
                     canvas.bind('<Motion>', gun.targetting)
+                    root.bind('<KeyPress-Up>', gun.up_start)
+                    root.bind('<KeyRelease-Up>', gun.up_finish)
+                    root.bind('<KeyPress-Down>', gun.down_start)
+                    root.bind('<KeyRelease-Down>', gun.down_finish)
                     canvas.update()
-                    if check==0:
+                    if check == 0:
                         for b in balls:
                             canvas.delete(b.id)
-                        text=canvas.create_text(400, 400,text='Вы уничтожили цель за ' + str(bullet) + ' выстрелов' )
+                        text = canvas.create_text(400, 400, text='Количество выстрелов: ' + str(bullet) )
                         canvas.update()
                         time.sleep(4)
                         canvas.delete(text)
                         canvas.delete(sc)
                         canvas.delete(b.id)
-                        check=n
+                        check = n
                         new_game()
         canvas.update()
         time.sleep(0.03)
         gun.targetting()
         gun.power_up()
-    canvas.delete(gun)
-    root.after(750, new_game)
+        gun.moveup()
+        gun.movedown()
+
 
 main()
 new_game()
-
 root.mainloop()
