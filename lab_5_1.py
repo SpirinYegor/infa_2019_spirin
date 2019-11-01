@@ -171,6 +171,7 @@ class Target():
 def new_game(event=''):
     global gun, target, screen1, balls, bullet, score
     bullet = 0
+    check=2
     balls = []
     targets= []
     target1=Target()
@@ -187,20 +188,29 @@ def new_game(event=''):
         for b in balls:
             b.move()
             for t in targets:
+                canvas.update()
                 if b.hittest(t) and t.live:
                     t.live = 0
-                    score+=1
-                    canvas.bind('<Button-1>', '')
-                    canvas.bind('<ButtonRelease-1>', '')
-                    text=canvas.create_text(400, 400,text='Вы уничтожили цель за ' + str(bullet) + ' выстрелов' )
-                    canvas.update()
-                    for t in targets:
-                        canvas.delete(t.id)
-                    time.sleep(4)
-                    canvas.delete(text)
+                    score += 1
                     canvas.delete(sc)
-                    canvas.delete(b.id)
-                    new_game()
+                    sc=canvas.create_text(30, 30, text=score, font='28')
+                    check -= 1
+                    canvas.delete(t.id)
+                    canvas.bind('<Button-1>', gun.fire2_start)
+                    canvas.bind('<ButtonRelease-1>', gun.fire2_end)
+                    canvas.bind('<Motion>', gun.targetting)
+                    canvas.update()
+                    if check==0:
+                        for b in balls:
+                            canvas.delete(b.id)
+                        text=canvas.create_text(400, 400,text='Вы уничтожили цель за ' + str(bullet) + ' выстрелов' )
+                        canvas.update()
+                        time.sleep(4)
+                        canvas.delete(text)
+                        canvas.delete(sc)
+                        canvas.delete(b.id)
+                        check=2
+                        new_game()
         canvas.update()
         time.sleep(0.03)
         gun.targetting()
