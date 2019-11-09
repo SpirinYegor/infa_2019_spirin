@@ -1,6 +1,6 @@
 import tkinter as tk
 import game
-n=2
+n = 2
 color = '#206999'
 def Menu():
     global root1, button1, button2, highscores, button3, color, button4, men, button5
@@ -112,6 +112,8 @@ def back_to_menu(event):
 def back_to_menu_s(event):
     global txt, n
     n = txt.get()
+    if n == '':
+        n=2
     n=int(n)
     root1.destroy()
     Menu()
@@ -135,16 +137,42 @@ def instruction(event):
 
 
 def settings(event):
-    global button1, button2, button3, button4, button5, txt
+    global button1, button2, button3, button4, button5, txt, color, var, root1, l1
     button1.destroy()
     button2.destroy()
     button3.destroy()
     button4.destroy()
     button5.destroy()
+    var = tk.IntVar()
+    var.set(0)
     txt = tk.Entry(width=45)
-    txt.place(x=340, y=300)
+    txt.place(x=540, y=300)
     l1 = tk.Label(text='Количество мишеней', font='arial 14', bg=color)
-    l1.place(x=380, y=250)
+    l1.place(x=580, y=250)
     button = tk.Button(text="Меню", width=5, height=2, font='arial 14')
     button.place(x=900, y=50)
     button.bind('<Button-1>', back_to_menu_s)
+    red = tk.Radiobutton(text="Желтый", variable=var, value=0)
+    green = tk.Radiobutton(text="Зеленый", variable=var, value=1)
+    blue = tk.Radiobutton(text="Синий", variable=var, value=2)
+    cyan = tk.Radiobutton(text='Исходный', variable=var, value=3)
+    buttonx = tk.Button(text='Изменить', command=change)
+    red.place(x=240, y=240)
+    green.place(x=240, y=260)
+    blue.place(x=240, y=280)
+    cyan.place(x=240, y=300)
+    buttonx.place(x=240, y=320)
+
+
+def change():
+    global men, var, color, l1
+    if var.get() == 0:
+        color = 'yellow'
+    elif var.get() == 1:
+        color = 'green'
+    elif var.get() == 2:
+        color = 'blue'
+    elif var.get() == 3:
+        color = '#206969'
+    men['bg'] = color
+    l1['bg'] = color
