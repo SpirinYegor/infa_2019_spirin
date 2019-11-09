@@ -4,14 +4,14 @@ import math
 import time
 
 
-def main(amount):
+def main(amount, c):
     global root, canvas, gun, score, gy, pause_change, data, n, color
     root = tk.Tk()
     root.title("Пушка")
     n = amount
-    color='#206999'
+    color=c
     score = 0
-    data=[i for i in range (n*5)]
+    data=[i for i in range (n*10)]
     pause_change = 1
     root.geometry('1000x600')
     canvas = tk.Canvas(root, bg=color)
@@ -117,7 +117,7 @@ class Gun():
         Происходит при отпускании кнопки мыши.
         Начальные значения компонент скорости мяча vx и vy зависят от положения мыши.
         """
-        global balls, bullet
+        global balls, bullet, pause_change
         bullet += 1
         r = 5
         self.angle = math.atan((event.y - self.y) / (event.x - self.x))
@@ -125,8 +125,9 @@ class Gun():
         y = self.y + max(self.f2_power, 20) * math.sin(self.angle)
         vx = self.f2_power * math.cos(self.angle)
         vy = - self.f2_power * math.sin(self.angle)
-        new_ball = Ball(x, y, vx, vy)
-        balls += [new_ball]
+        if pause_change > 0:
+            new_ball = Ball(x, y, vx, vy)
+            balls += [new_ball]
         self.f2_on = 0
         self.f2_power = 10
 
@@ -190,10 +191,10 @@ class Target():
         r = self.r = rnd(15, 50)
         self.vx = rnd(1, 10)
         self.vy = rnd(1, 10)
-        color = self.color = 'red'
+        self.color = choice(['aquamarine', 'coral', 'pink', 'purple1', 'salmon', 'goldenrod', 'maroon1'])
         self.id = canvas.create_oval(0, 0, 0, 0)
         canvas.coords(self.id, x-r, y-r, x+r, y+r)
-        canvas.itemconfig(self.id, fill=color)
+        canvas.itemconfig(self.id, fill=self.color)
 
     def set_coords(self):
         canvas.coords(
@@ -232,9 +233,7 @@ def pause(event):
             k += 1
             data[k] = i.vy
             i.vy = 0
-        k += 1
         gy=0
-        data[k] = gun.vy
         gun.vy=0
     else:
         for i in balls:
@@ -247,9 +246,8 @@ def pause(event):
             i.vx = data[k]
             k += 1
             i.vy = data[k]
-        k += 1
         gy = 1
-        gun.vy = data[k]
+        gun.vy = 5
 
 def new_game():
     global gun, balls, bullet, score, targets, n

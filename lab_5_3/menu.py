@@ -1,7 +1,7 @@
 import tkinter as tk
 import game
 n = 2
-color = '#206999'
+color = 'navajo white'
 def Menu():
     global root1, button1, button2, highscores, button3, color, button4, men, button5
     root1 = tk.Tk()
@@ -51,10 +51,10 @@ def clicked1(event):
 
 
 def start(event):
-    global root1, txt, name
+    global root1, txt, name, color
     name = txt.get()
     root1.destroy()
-    game.main(n)
+    game.main(n, color)
     button = tk.Button(text='Вернуться в меню', width=15, height=2, font='arial 14')
     button.place(x=820, y=10)
     button.bind('<Button-1>', clickedmenu)
@@ -109,14 +109,12 @@ def back_to_menu(event):
     Menu()
 
 
-def back_to_menu_s(event):
+def change_quantity(event):
     global txt, n
     n = txt.get()
     if n == '':
         n=2
     n=int(n)
-    root1.destroy()
-    Menu()
 
 
 def instruction(event):
@@ -130,14 +128,14 @@ def instruction(event):
     men.create_text(400, 100, text='За каждое попадание начисляется по одному очку.     ', font='arial 20')
     men.create_text(410, 150, text='Передвигайте пушку с помощью клавиш вверх и вниз.   ', font='arial 20')
     men.create_text(380, 200, text='Если цель попадет в пушку, вы проиграете.           ', font='arial 20')
-    men.create_text(410, 240, text="Игру можно поставить на паузу с помощью клавиши 'P'.", font='arial 20')
+    men.create_text(470, 240, text="Игру можно поставить на паузу с помощью клавиши 'P'. !!!ENG!!!", font='arial 20')
     button = tk.Button(text="Меню", width=5, height=2, font='arial 14')
     button.place(x=900, y=50)
     button.bind('<Button-1>', back_to_menu)
 
 
 def settings(event):
-    global button1, button2, button3, button4, button5, txt, color, var, root1, l1
+    global button1, button2, button3, button4, button5, txt, color, var, root1, l1, men
     button1.destroy()
     button2.destroy()
     button3.destroy()
@@ -145,13 +143,17 @@ def settings(event):
     button5.destroy()
     var = tk.IntVar()
     var.set(0)
+    men.create_text(270, 220, text='Цвет фона', font='arial 14')
     txt = tk.Entry(width=45)
     txt.place(x=540, y=300)
     l1 = tk.Label(text='Количество мишеней', font='arial 14', bg=color)
     l1.place(x=580, y=250)
+    button_ok = tk.Button(text='Подтвердить', width=10, height=1, font='arial 14')
     button = tk.Button(text="Меню", width=5, height=2, font='arial 14')
     button.place(x=900, y=50)
-    button.bind('<Button-1>', back_to_menu_s)
+    button.bind('<Button-1>', back_to_menu)
+    button_ok.place(x=610, y=330)
+    button_ok.bind('<Button-1>', change_quantity)
     red = tk.Radiobutton(text="Желтый", variable=var, value=0)
     green = tk.Radiobutton(text="Зеленый", variable=var, value=1)
     blue = tk.Radiobutton(text="Синий", variable=var, value=2)
@@ -161,18 +163,18 @@ def settings(event):
     green.place(x=240, y=260)
     blue.place(x=240, y=280)
     cyan.place(x=240, y=300)
-    buttonx.place(x=240, y=320)
+    buttonx.place(x=240, y=330)
 
 
 def change():
     global men, var, color, l1
     if var.get() == 0:
-        color = 'yellow'
+        color = 'lemon chiffon'
     elif var.get() == 1:
-        color = 'green'
+        color = 'spring green'
     elif var.get() == 2:
-        color = 'blue'
+        color = 'Skyblue2'
     elif var.get() == 3:
-        color = '#206969'
+        color = 'navajo white'
     men['bg'] = color
     l1['bg'] = color
